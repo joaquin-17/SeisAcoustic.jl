@@ -22,7 +22,29 @@ struct Recordings{Ti<:Int64, Tv<:AbstractFloat}
 end
 
 """
-   constructor for recordings
+
+R = Recordings(rz, rx, params; <keyword arguments>)
+
+Constructs a Recordings structure.
+
+Please see the extended help with `?? Source`
+
+# Arguments
+
+-`rz::`: Receiver coordinate.
+-`rx::`: Receiver coordinate.
+-`params::TdParams`: Parameters for time domain modelling.
+
+# Keyword Arguments:
+
+-`location_flag`: Receiver(s) positioning by `"index"` or `"distance".
+
+# Extended help
+
+      R=Recordings(rz, rx, params; location_flag="index")
+
+The structure `Recordings{Ti<:Int64, Tv<:AbstractFloat}` defines the receiver location by either its position or relative index in the model through the `location_flag`.
+
 """
 function Recordings(rz::Vector, rx::Vector,
          params::TdParams; location_flag="index")
