@@ -1,14 +1,24 @@
 """
-   structure for recordings, only pressure field are sampled
+   Immutable structure that contains recordings. Only pressure fields are sampled.
+
+# Fields
+
+-`nt::Ti`: Number of samples per trace.
+-`nr::Ti`: Number of receivers.
+-`dt::Tv`: Time sampling rate.
+-`irz::Vector{Ti}`: Vertical grid index for receivers.
+-`irx::Vector{Ti}`: Horizontal grid index for receivers.
+-`spt2rec::Vector{Ti}`:Index mapping of receiver to snapshot.
+-`p::Vector{Tv}`: Vector of recodrings of preassure field.
 """
 struct Recordings{Ti<:Int64, Tv<:AbstractFloat}
-     nt      :: Ti          # number of samples per trace
-     nr      :: Ti          # number of receiver
+     nt      :: Ti          
+     nr      :: Ti          
      dt      :: Tv
-     irz     :: Vector{Ti}  # vertical grid index of receivers
-     irx     :: Vector{Ti}  # horizontal grid index of receivers
-     spt2rec :: Vector{Ti}  # index mapping of receiver to snapshot
-     p       :: Matrix{Tv}  # recordings of pressure field
+     irz     :: Vector{Ti}  
+     irx     :: Vector{Ti}  
+     spt2rec :: Vector{Ti}  
+     p       :: Matrix{Tv}  
 end
 
 """
