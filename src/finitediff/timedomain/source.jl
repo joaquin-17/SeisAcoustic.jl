@@ -16,6 +16,7 @@ Defines an explosive source for time domain finite difference modelling.
 - `it_min::Ti`  : source lower time index
 - `it_max::Ti`  : source upper time index
 - `p::Vector{Tv}` :  Vector of Source wavelets
+- `hello`
 """
 struct Source{Ti<:Int64, Tv<:AbstractFloat}
     isz     :: Ti  # vertical index location
