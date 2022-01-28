@@ -1,51 +1,48 @@
 """
-   immutable struct contain the model parameters
-*  data_format : Float32 or Float64
-*  nz          : depth of model
-*  nx          : length of model
-*  npml        : number of PML layers
-*  free_surface: true -> no obsorbtion on the surface
-                 false-> PML on the surface
-*  Nz          : depth of model (include PML padding)
-*  Nx          : length of model (include PML padding)
-*  ntop        : number of padded PML layers on the top
-*  spt2wfd     : auxillary index vector for computing wavefield from snapshot
-*  spt2bnd     : auxillary index vector for computing wavefield boundaries from snapshot
-*  bnd2wfd     : auxillary index vector for inserting wavefield boundaries to wavefield
-*  dz          : vertical grid size
-*  dx          : horizontal grid size
-*  dt          : time step size
-*  tmax        : maximum modelling length
-*  nt          : number of time steps
-*  rho         : 2D density model
-*  vel         : 2D P-wave velocity model
-*  MvzBvz      : FD stencil for updating v_z from v_z, vector length of Nz
-*  MvzBp       : FD stencil for updating v_z from p  , vector length of Nz * Nx
-*  dpdz        : sparse matrix computing dp/dz
 
-*  MvxBvx      : FD stencil for updating v_x from v_x, vector length of Nx
-*  MvxBp       : FD stencil for updating v_x from p  , vector length of Nz * Nx
-*  dpdx        : sparse matrix computing dp/dx
+Defines an immutable structure that contains time domain parameters for time domain finite difference modelling.
 
-*  MpzBpz      : FD stencil for updating p_z from p_z, vector length of Nz
-*  MpzBvz      : FD stencil for updating p_z from v_z, vector length of Nz * Nx
-*  dvdz        : sparse matrix computing dvz/dz
+# Fields
 
-*  MpxBpx      : FD stencil for updating p_x from p_x, vector length of Nx
-*  MpxBvx      : FD stencil for updating p_x from v_x, vector length of Nz * Nx
-*  dvdx        : sparse matrix computing dvx/dx
-
-*  RvzBp       : FD stencil for updating v_z from p, vector length of nz * nx
-*  rpdz        : sparse matrix computing dp/dz
-
-*  RvxBp       : FD stencil for updating v_x from p, vector length of nz * nx
-*  rpdx        : sparse matrix computing dp/dx
-
-*  RpzBvz      : FD stencil for updating p_z from v_z, vector length of nz * nx
-*  rvdz        : sparse matrix computing dv/dz
-
-*  RpxBvx      : FD stencil for updating p_x from v_x, vector length of nz * nx
-*  rvdx        : sparse matrix computing dv/dx
+-`nz::Ti` : Depth of model.
+-`nx`::Ti` : Length of model.
+-`npml::Ti` : Number of PML layers.
+-`free_surface::Bool` : true -> no obsorbtion on the surface.
+                      : false-> PML on the surface.
+-`Nz`::Ti` : Depth of model (include PML padding).
+-`Nx::Ti` : Length of model (include PML padding).
+-`ntop::Ti` : Number of padded PML layers on the top.
+-`spt2wfd::Vector{Ti}` : Auxillary index vector for computing wavefield from snapshot.
+-`spt2bnd::Vector{Ti}` : Auxillary index vector for computing wavefield boundaries from snapshot.
+-`bnd2wfd::Vector{Ti}` : Auxillary index vector for inserting wavefield boundaries to wavefield.
+-`dz::Tv` : Vertical grid size.
+-`dx::Tv` : Horizontal grid size.
+-`dt::Tv` : Time step size.
+-`tmax::Tv` : Maximum modelling length.
+-`nt::Ti` : Number of time steps.
+-`rho::Matrix{Tv}` : 2D density model.
+-`vel::Matrix{Tv} : 2D P-wave velocity model.
+-`order::Ti : Order of precision, this parameter decides the number of layers required for wavefield reconstruction.
+-`MvzBvz::Vector{Tv}` : FD stencil for updating v_z from v_z, vector length of Nz.
+-`MvzBp::Vector{Tv}` : FD stencil for updating v_z from p  , vector length of Nz * Nx.
+-`dpdz:: SparseMatrixCSC{Tv,Ti}` : Sparse matrix computing dp/dz.
+-`MvxBvx::Vector{Tv}` : FD stencil for updating v_x from v_x, vector length of Nx.
+-`MvxBp::Vector{Tv}`  : FD stencil for updating v_x from p  , vector length of Nz * Nx.
+-`dpdx::SparseMatrixCSC{Tv,Ti}` : Sparse matrix computing dp/dx.
+-`MpzBpz::Vector{Tv}` : FD stencil for updating p_z from p_z, vector length of Nz.
+-`MpzBvz::Vector{Tv}` : FD stencil for updating p_z from v_z, vector length of Nz * Nx.
+-`dvdz::SparseMatrixCSC{Tv,Ti}` : Sparse matrix computing dvz/dz.
+-`MpxBpxVector{Tv}` : FD stencil for updating p_x from p_x, vector length of Nx.
+-`MpxBvx::Vector{Tv}` : FD stencil for updating p_x from v_x, vector length of Nz * Nx.
+-`dvdx::SparseMatrixCSC{Tv,Ti}` : Sparse matrix computing dvx/dx.
+-`RvzBp::Vector{Tv}` : FD stencil for updating v_z from p, vector length of nz * nx.
+-`rpdz::SparseMatrixCSC{Tv,Ti}` : Sparse matrix computing dp/dz.
+-`RvxBp::Vector{Tv}` : FD stencil for updating v_x from p, vector length of nz * nx.
+-`rpdx::SparseMatrixCSC{Tv,Ti}` : Sparse matrix computing dp/dx.
+-`RpzBvz::Vector{Tv}` : FD stencil for updating p_z from v_z, vector length of nz * nx.
+-`rvdz::SparseMatrixCSC{Tv,Ti}` : Sparse matrix computing dv/dz.
+-`RpxBvx::Vector{Tv}` : FD stencil for updating p_x from v_x, vector length of nz * nx.
+-`rvdx::SparseMatrixCSC{Tv,Ti}` : Sparse matrix computing dv/dx.
 """
 struct TdParams{Ti<:Int64, Tv<:AbstractFloat}
 
