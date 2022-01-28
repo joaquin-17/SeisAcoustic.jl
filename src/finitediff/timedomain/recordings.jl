@@ -22,8 +22,7 @@ struct Recordings{Ti<:Int64, Tv<:AbstractFloat}
 end
 
 """
-
-R = Recordings(rz, rx, params; <keyword arguments>)
+    R = Recordings(rz, rx, params; <keyword arguments>)
 
 Constructs a Recordings structure.
 
