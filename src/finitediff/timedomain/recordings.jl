@@ -30,8 +30,8 @@ Please see the extended help with `?? Source`
 
 # Arguments
 
--`rz::`: Receiver coordinate.
--`rx::`: Receiver coordinate.
+-`rz`: Receiver coordinate.
+-`rx`: Receiver coordinate.
 -`params::TdParams`: Parameters for time domain modelling.
 
 # Keyword Arguments:
