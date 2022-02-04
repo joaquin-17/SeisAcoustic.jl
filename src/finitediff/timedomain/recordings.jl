@@ -9,6 +9,7 @@ struct Recordings{Ti<:Int64, Tv<:AbstractFloat}
      irx     :: Vector{Ti}  # horizontal grid index of receivers
      spt2rec :: Vector{Ti}  # index mapping of receiver to snapshot
      p       :: Matrix{Tv}  # recordings of pressure field
+     vz      :: Matrix{Tv}  # recordings of vertical velocity
 end
 
 """
@@ -65,8 +66,9 @@ function Recordings(rz::Vector, rx::Vector,
     end
 
     # initalize empty recordings
-    p  = zeros(params.data_format, params.nt, nr)
-    rec= Recordings(params.nt, nr, params.dt, irz, irx, spt2rec, p)
+    p   = zeros(params.data_format, params.nt, nr)
+    vz  = zeros(params.data_format, params.nt, nr)
+    rec = Recordings(params.nt, nr, params.dt, irz, irx, spt2rec, p, vz)
 
     return rec
 end
@@ -107,6 +109,7 @@ function write_recordings(path::String, rec::Recordings)
 
     # write the recordings
     write(fid, rec.p)
+    write(fid, rec.vz)
 
     #close file
     close(fid)
@@ -148,15 +151,18 @@ function read_recordings(path::String)
     # read the time sampling interval
     dt = read(fid, data_format)
 
-    # read the recordings
+    # read the recordings (p and vz)
     p = zeros(data_format, nt * nr)
     read!(fid, p); p = reshape(p, nt, nr);
+
+    vz = zeros(data_format, nt * nr)
+    read!(fid, vz); vz = reshape(vz, nt, nr);
 
     #close file
     close(fid)
 
     # organize them into a structure
-    rec = Recordings(nt, nr, dt, irz, irx, spt2rec, p)
+    rec = Recordings(nt, nr, dt, irz, irx, spt2rec, p, vz)
 
     return rec
 end
@@ -169,7 +175,8 @@ function sample_spt2rec!(rec::Recordings, spt::Snapshot, it::Int64)
     # loop over receivers
     for i = 1 : rec.nr
         idx = rec.spt2rec[i]
-        rec.p[it,i] = spt.pz[idx] + spt.px[idx]
+        rec.p[it,i]  = spt.pz[idx] + spt.px[idx]
+        rec.vz[it,i] = spt.vz[idx]
     end
 
     return nothing
