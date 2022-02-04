@@ -1,19 +1,51 @@
 """
-   structure for recordings, only pressure field are sampled
+   Immutable structure that contains recordings. Only pressure fields are sampled.
+
+# Fields
+
+-`nt::Ti`: Number of samples per trace.
+-`nr::Ti`: Number of receivers.
+-`dt::Tv`: Time sampling rate.
+-`irz::Vector{Ti}`: Vertical grid index for receivers.
+-`irx::Vector{Ti}`: Horizontal grid index for receivers.
+-`spt2rec::Vector{Ti}`:Index mapping of receiver to snapshot.
+-`p::Vector{Tv}`: Vector of recodrings of preassure field.
 """
 struct Recordings{Ti<:Int64, Tv<:AbstractFloat}
-     nt      :: Ti          # number of samples per trace
-     nr      :: Ti          # number of receiver
+     nt      :: Ti          
+     nr      :: Ti          
      dt      :: Tv
      irz     :: Vector{Ti}  # vertical grid index of receivers
      irx     :: Vector{Ti}  # horizontal grid index of receivers
      spt2rec :: Vector{Ti}  # index mapping of receiver to snapshot
      p       :: Matrix{Tv}  # recordings of pressure field
      vz      :: Matrix{Tv}  # recordings of vertical velocity
+
 end
 
 """
-   constructor for recordings
+    R = Recordings(rz, rx, params; <keyword arguments>)
+
+Constructs a Recordings structure.
+
+Please see the extended help with `?? Source`
+
+# Arguments
+
+-`rz`: Receiver coordinate.
+-`rx`: Receiver coordinate.
+-`params::TdParams`: Parameters for time domain modelling.
+
+# Keyword Arguments:
+
+-`location_flag`: Receiver(s) positioning by `"index"` or `"distance".
+
+# Extended help
+
+      R=Recordings(rz, rx, params; location_flag="index")
+
+The structure `Recordings{Ti<:Int64, Tv<:AbstractFloat}` defines the receiver location by either its position or relative index in the model through the `location_flag`.
+
 """
 function Recordings(rz::Vector, rx::Vector,
          params::TdParams; location_flag="index")

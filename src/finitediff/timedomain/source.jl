@@ -4,7 +4,19 @@
 # abstract type Source end
 
 """
-   struct for explosive source
+Defines an explosive source for time domain finite difference modelling.
+
+# Fields
+
+- `isz::Ti`: vertical index location
+- `isx::Ti`: horizontal index location
+- `src2spt::Ti` : index mapping source location to snapshot
+- `src2wfd::Ti` : index mapping source location to wavefield
+- `dt::Tv`      : time sampling
+- `it_min::Ti`  : source lower time index
+- `it_max::Ti`  : source upper time index
+- `p::Vector{Tv}` :  Vector of Source wavelets
+- `hello`
 """
 struct Source{Ti<:Int64, Tv<:AbstractFloat}
     isz     :: Ti  # vertical index location
@@ -111,8 +123,39 @@ function scaled_sinc(fc, hl, dt::Tv) where {Tv<:AbstractFloat}
 end
 
 """
-   initialize source structure, we provide four options to specify the source wavelet
-ricker (default option), sinc, miniphase, user provided.
+   S=Source(sz, sx, params; <keyword arguments>)
+
+Constructs an explosive Source structure.
+
+Please see the extended help with `?? Source`
+
+# Arguments
+
+-`sz::`: source coordinate
+-`sx::`: soirce cordinate
+-`params::TdParams`: Parameters for time domain modelling
+
+# Keyword Arguments
+
+-`location_flag`: Source(s) positioning by `"index"` or `"distance"`
+-`ot`: Source(s) firing time 
+-`amp`: Source(s) amplitude
+-`fdom`: Dominant frequency of wavelet
+-`type_flag`: Type of source wavelet.
+-`hl`:Window lenght for sinc interpolation (for type_flag="sinc")
+-`p`: Either a user provided source wavelet or a vector of source wavelets.
+
+# Extended help
+
+   S=Source(sz, sx, params; location_flag="index", ot=0.0, amp=1.0, fdom=20.0, hl=128, type_flag="ricker", p::Vector{Float32}=p)
+
+The structure defines the source location by either its position or relative index in the model through the `location_flag`.
+
+If the source wavelet (or a vector of source wavelets) `p` is not provieded, the user can specify it with "type_flag".
+
+-Default Ricker wavelet: `type_flag="ricker"`
+-Sinc wavelet: `type_flag="sinc"`
+-Minimum phase wavelet: `type_flag=miniphase`
 """
 function Source(sz, sx, params::TdParams; location_flag="index", ot=0.0, amp=1.0, fdom=20.0, hl=128,
                 type_flag="ricker", p=Vector{Float32}(undef,0)) where {Tv <: Real}
@@ -174,7 +217,29 @@ function Source(sz, sx, params::TdParams; location_flag="index", ot=0.0, amp=1.0
 end
 
 """
-   get a vector of Source
+   source_array= get_multi_sources(sz::Vector, sx::Vector, params::TdParams; <keyword arguments>)
+
+Get an array of sources with different positions.
+
+Every element of the source array contains an initialized Source structure. 
+
+# Arguments:
+
+-`sz::Vector`: source z coordinates.
+-`sx::Vector`: source x coordinates.
+-`params::TdParams`: Time domain parameters for modeling.
+
+# Extended help
+
+This function extends the function constructor `Source` to a vector of source. 
+
+-`location_flag::String`: Define the type of location for each source. 
+-`ot::Vector`: Vector of firing times for each source.
+-`amp::Float64`: Amplitude for the array of sources.
+-`fdom::Float64`: Dominant frequency the array of sources.
+-`hl::`:
+-`typef_flag::String`: Type of source (default: "ricker")
+-`p::Vector{Float32}`: Vector of wavelets for the array of soruces.
 """
 function get_multi_sources(sz::Vector, sx::Vector, params::TdParams; location_flag="index", ot=0.0, amp=1.0,
                           fdom=20.0, hl=128, type_flag="ricker", p=Vector{Float32}(undef,0))
