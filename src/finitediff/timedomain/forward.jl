@@ -158,19 +158,59 @@ function one_step_forward!(spt2::Snapshot{Tv}, spt1::Snapshot{Tv}, params::TdPar
     return nothing
 end
 
-# ==============================================================================
-#                        forward simulation
-# ==============================================================================
 """
-   forward modelling acoustic wavefield using finite difference method.
-rz != "NULL" && rx != "NULL" : generate records by sampling wavefield
-path_shot!= "NULL" : save the records
-path_spt != "NULL" : vz, vx, pz, px include PML part, save every save_interval step
-path_wfd != "NULL" : vz, vx, pz+px  without PML part, save every save_interval step
-path_pre != "NULL" : p=pz+px without PML bounary part. save every save_interval step
-path_bnd != "NULL" : save boundary of wavefield at each step, it will be used for source-side wavefield reconstruction
-path_lwfd!= "NULL" : save the last wavefield, it will be used for source-side wavefield reconstruction
-path_sws != "NULL" : save the source-side wavefield strength (preconditioner for imaging)
+
+        Wave_field= multi_step_forward(sources, params; <keyword arguments>)
+
+Forward modelling for acoustic wavefield using finite difference method. This function returns a Recording structure, to acess the wavefield values do:
+
+    Wf_values = Wave_field.p
+
+Please see the extended help with `?? Source
+   
+
+#Fields
+
+- `src::Ts<:Union{Source, Vector{Source}}`: Sources for generating the wavefield.
+- `params::TdParams`: Structure that contain time domain model parameters.
+
+
+#Keyword Arguments
+
+-`rz`: Position for the receiver (sample of the wavefield) in the direction z.
+-`rx`: Position for the receiver (sample of the wavefield) in the direction x.
+-`path_shot!= "NULL"` : save the records.
+-`path_spt != "NULL"`` : vz, vx, pz, px include PML part, save every save_interval step.
+-`path_wfd != "NULL"` : vz, vx, pz+px  without PML part, save every save_interval step.
+-`path_pre != "NULL"` : p=pz+px without PML bounary part, save every save_interval step.
+-`path_bnd != "NULL"` : Save boundary of wavefield at each step, it will be used for source-side wavefield reconstruction.
+-`path_lwfd != "NULL"` : Save the last wavefield, it will be used for source-side wavefield reconstruction.
+-`path_sws != "NULL"` : Save the source-side wavefield strength (preconditioner for imaging).
+
+# Extended help
+
+        Wave_field= multi_step_forward(sources, params; rx, rz)
+
+Given a source or a vector of sources ( of type Vector{Source{Int64, Float64}}) and the parameter for time-domain modeling, this function will
+generate a wavefield sampled for all rx and rz locations. It is possible to use the function inside a control flow structure such as "for loop" 
+to generate a set of sampled wavefields.
+
+# Example
+
+Given a vector of sources `sx` and the number of receivers in x direction `n_rx` and `n_rz` direction:
+
+#shot gather volume 
+sgv=zeros(Float64,4001,length(n_rx),length(sources)); 
+
+#loop
+
+for i=1:length(sx)
+    Wave_field[i]= multi_step_forward(sources[i], params; rz=n_rz, rx=n_rx) ;
+    sgv[:,:,i].= shot_gather[i].p; # access 
+end
+
+The cube `sgv` contains all the smapled wavefields for the given sources and receiver geometry.
+
 """
 function multi_step_forward(src::Ts, params::TdParams;
                             rz="NULL", rx="NULL", location_flag="index", path_shot="NULL",
